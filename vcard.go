@@ -34,7 +34,28 @@ type VCard struct {
 
 func displayStrings(ss []string) (display string) {
 	for _, s := range ss {
-		display += s + ", "
+		display += s + " "
+	}
+	return display
+}
+
+func displayEmails(ss []Email) (display string) {
+	for _, s := range ss {
+		display += s.Address + ", "
+	}
+	return display
+}
+
+func displayTelephones(ss []Telephone) (display string) {
+	for _, s := range ss {
+		display += s.Number + ", "
+	}
+	return display
+}
+
+func displayAddresses(ss []Address) (display string) {
+	for _, s := range ss {
+		display += s.Street + ", "
 	}
 	return display
 }
@@ -44,7 +65,17 @@ func (v VCard) String() (s string) {
 	s += "FormattedName:" + v.FormattedName + "\n"
 	s += "FamilyNames:" + displayStrings(v.FamilyNames) + "\n"
 	s += "GivenNames:" + displayStrings(v.GivenNames) + "\n"
-	s += "AdditionalNames:" + displayStrings(v.AdditionalNames) + "\n"
+	s += "NickNames:" + displayStrings(v.NickNames) + "\n"
+	s += "Photo:" + (v.Photo.Type) + "\n"
+	s += "Birthday:" + (v.Birthday) + "\n"
+	s += "Addresses:" + displayAddresses(v.Addresses) + "\n"
+	s += "Telephones:" + displayTelephones(v.Telephones) + "\n"
+	s += "Emails:" + displayEmails(v.Emails) + "\n"
+	s += "Title:" + (v.Title) + "\n"
+	s += "Role:" + (v.Role) + "\n"
+	s += "Org:" + displayStrings(v.Org) + "\n"
+	s += "Categories:" + displayStrings(v.Categories) + "\n"
+	s += "URL:" + (v.URL) + "\n"
 	return s
 }
 
@@ -131,7 +162,14 @@ func getValueFromContentLine(index int, contentLine *ContentLine) ([]string, str
 
 func (vcard *VCard) ReadFrom(di *DirectoryInfoReader) {
 	contentLine := di.ReadContentLine()
+
 	for contentLine != nil {
+
+		//log.Printf("FIELD: ", contentLine.Name)
+		//log.Printf("VALUE: ", contentLine.Value.GetText())
+
+		/////////////////////////////////////////////////////////////////
+
 		switch contentLine.Name {
 		case "VERSION":
 			fallthrough
@@ -282,7 +320,7 @@ func (vcard *VCard) ReadFrom(di *DirectoryInfoReader) {
 		case "X-ABADR":
 			// ignore*/
 		default:
-			log.Printf("Not read %s, %s: %s\n", contentLine.Group, contentLine.Name, contentLine.Value)
+			//log.Printf("Not read %s, %s: %s\n", contentLine.Group, contentLine.Name, contentLine.Value)
 		}
 		contentLine = di.ReadContentLine()
 	}
